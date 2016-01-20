@@ -1,3 +1,24 @@
 body {
   text-align: center;
 }
+
+.header {
+  background-image: url(http://susancorso.com/seedsforsanctuary/wp-content/uploads/2013/04/box_placeholder.jpg);
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.shady {
+  background: rgba(30,30,30,0.7);
+}
+
+.whitey {
+  color: white;
+  border-color: white;
+}
+
+.topic {
+  margin: 10px auto;
+  border: solid 2px black;
+}

@@ -1,0 +1,20 @@
+<% if session['logged_in'] %>
+<form action="/topics" method="post" class="seven columns topic">
+
+  <div>
+    <label for="title">Title: </label>
+    <input name="title" type="text" required/>
+  </div>
+
+  <div>
+    <label for="content">Enter text here, bro! </label>
+    <textarea name="content" required></textarea> 
+  </div>
+
+  <div>
+  <input type="submit" value="Submit, bro!" />
+  </div>
+</form>
+<% else %>
+  <h1>Nothing to see here, Bro</h1>
+<% end %>

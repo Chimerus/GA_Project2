@@ -1,9 +1,19 @@
 <h1>All Topics</h1>
 
 <% if session['logged_in'] %>
-    <a href="/post">New Topic</a>
+    <a href="/post_topic">New Topic</a>
 <% else %>
   <h3>placeholder text: not logged in</h3>
 <% end %>
 
 <p>placeholder text: add list of topics here</p>
+<div>
+  <% @topic_list.each do |topic| %>
+  <div class="eight columns topic">
+    <div><%= topic["title"] %></div>
+    <div>Posted by: <%= topic["user_id"] %></div>
+    <div><%= topic["content"] %></div>
+  </div>
+  <% end %>
+</div>
+

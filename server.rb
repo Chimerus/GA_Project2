@@ -37,7 +37,7 @@ module Forum
           session['user_id'] = returning_user.first['id'].to_i
           session['logged_in'] = true
           # binding.pry
-          erb :topic_thread
+          erb :index
         else
           # sends to ending page if password incorrect, notifies
           @password = true
@@ -48,7 +48,7 @@ module Forum
         redirect '/signup'
       end
     end
-    # This bit experimental
+
     get '/logout' do
       session[:user_id] = nil
       session['logged_in'] = false
@@ -57,6 +57,7 @@ module Forum
     end
 
     get '/' do
+      @top_posts = @@db.exec('SELECT * FROM topics LIMIT 3')
       erb :index
     end
 
@@ -76,20 +77,39 @@ module Forum
     end
 
     get '/topics' do
+      @topic_list = @@db.exec('SELECT * FROM topics')
+      # binding.pry
       erb :topics
     end
 
     get '/topic_thread' do
       erb :topic_thread
     end
+    # Topic and Post routes and creation
 
-    get '/post' do
-      erb :post
+    get '/post_topic' do
+      erb :post_topic
     end
 
-    post '/post' do 
+    post '/topics' do 
+      title = params["title"]
+      content = params["content"]
+      op = session['user_id']
+      upvotes = 0
+      @@db.exec_params(<<-SQL, [params['title'], params['content'], upvotes, op])
+      INSERT INTO topics (title, content, upvotes, user_id)
+      VALUES ($1,$2,$3,$4);
+      SQL
+      redirect '/topics'
+    end 
 
-     end 
+    get '/regular_post' do
+      erb :regular_post
+    end
+
+    post '/regular_post' do 
+
+    end 
 
     get '/end' do
       erb :end
