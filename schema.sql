@@ -19,5 +19,6 @@ CREATE TABLE posts (
   content VARCHAR NOT NULL,
   password_digest VARCHAR NOT NULL,
   email VARCHAR UNIQUE NOT NULL,
-  user_id INTEGER REFERENCES users(id)
+  user_id INTEGER REFERENCES users(id),
+  topics_id INTEGER REFERENCES topics(id)
 );

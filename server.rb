@@ -83,6 +83,14 @@ module Forum
       erb :topic_thread
     end
 
+    get '/post' do
+      erb :post
+    end
+
+    post '/post' do 
+
+     end 
+
     get '/end' do
       erb :end
     end
