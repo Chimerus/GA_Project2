@@ -9,9 +9,6 @@ module Forum
     # session handling, must be enabled! to secure login instead of cookies
     enable :sessions
 
-    # variables
-    @the_sell = ""
-
     @@db = PG.connect dbname: 'forum_dev'
 
     def current_user
@@ -38,7 +35,7 @@ module Forum
         if checky == password
           # this user_id is just a var, but now they are tagged?
           session['user_id'] = returning_user.first['id'].to_i
-          @logged_in = true
+          session['logged_in'] = true
           # binding.pry
           erb :topic_thread
         else
@@ -47,15 +44,15 @@ module Forum
           erb :end
         end
       else
-        @the_sell = "That user does not exist! Would you like to join?"
+        session['the_sell'] = "That user does not exist! Would you like to join?"
         redirect '/signup'
       end
     end
     # This bit experimental
     get '/logout' do
       session[:user_id] = nil
+      session['logged_in'] = false
       @logout = true
-      @logged_in = false
       erb :end
     end
 
@@ -75,7 +72,7 @@ module Forum
       SQL
       # this user_id is just a var, but now they are tagged?
       session['user_id'] = new_user.first['id'].to_i
-      erb :signup_success
+      erb :index
     end
 
     get '/topics' do
