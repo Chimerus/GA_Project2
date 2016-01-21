@@ -3,6 +3,7 @@ require 'sinatra/base'
 require 'pg'
 require 'bcrypt'
 require 'pry'
+require 'redcarpet'
 
 module Forum
   class Server < Sinatra::Base
@@ -17,6 +18,11 @@ module Forum
         SELECT * FROM users  WHERE id = $1
       SQL
     end
+
+    # def markdown(text)
+    #   options = [:hard_wrap, :filter_html, :autolink, :no_intraemphasis, :fenced_code, :gh_blockcode]
+    #   Redcarpet.new(text, *options).to_html
+    # end
 
     get '/login' do
       erb :login
@@ -81,7 +87,6 @@ module Forum
       # @topic_list = @@db.exec('SELECT * FROM topics LEFT JOIN users ON user_id = users.id')
       @topic_list = @@db.exec('SELECT topics.*, users.name FROM topics, users WHERE topics.user_id = users.id')
 
-      # binding.pry
       erb :topics
     end
 
@@ -98,11 +103,15 @@ module Forum
     end
 
     post '/topics' do 
+      # new md stuff
+      md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+      markdown = md.render(params["content"])
+      # end
       title = params["title"]
-      content = params["content"]
+      # content = params["content"]
       op = session['user_id']
       upvotes = 0
-      @@db.exec_params(<<-SQL, [params['title'], params['content'], upvotes, op])
+      @@db.exec_params(<<-SQL, [title, markdown, upvotes, op])
       INSERT INTO topics (title, content, upvotes, user_id)
       VALUES ($1,$2,$3,$4);
       SQL
@@ -122,10 +131,12 @@ module Forum
     end
 
     post '/regular_post' do 
-      @content = params["content"]
-      @t_id = params["topics_id"]
-      @op = session['user_id']
-      @@db.exec_params(<<-SQL,[ @content, @op, @t_id ])
+      md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+      markdown = md.render(params["content"])
+      # @content = params["content"]
+      t_id = params["topics_id"]
+      op = session['user_id']
+      @@db.exec_params(<<-SQL,[ markdown, op, t_id ])
       INSERT INTO posts (content, user_id, topics_id)
       VALUES ($1,$2,$3);
       SQL
