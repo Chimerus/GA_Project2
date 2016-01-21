@@ -1,19 +1,24 @@
 <h1>All Topics</h1>
 
 <% if session['logged_in'] %>
-    <a href="/post_topic">New Topic</a>
+    <a href="/post_topic" class="button">New Topic</a>
 <% else %>
-  <h3>placeholder text: not logged in</h3>
 <% end %>
-
-<p>placeholder text: add list of topics here</p>
 <div>
   <% @topic_list.each do |topic| %>
+  <% #binding.pry %>
   <div class="eight columns topic">
-    <div><%= topic["title"] %></div>
-    <div>Posted by: <%= topic["user_id"] %></div>
+    <a href="/topic_thread/<%= topic["id"] %>"><h4 class ="nomargin"><%= topic["title"] %></h4></a>
+    <div>Posted by: <%= topic["name"] %></div>
     <div><%= topic["content"] %></div>
+    <div><%= topic["upvotes"] %> Upvotes</div>
+    <% if session['logged_in'] %>
+    <form method="post" action="/update/<%=topic['id']%>">
+      <input type ="hidden" name="_method" value="put">
+      <input type="submit" value="Upvote" class="button">
+    </form>
+    <% else %>
+    <% end %>
   </div>
   <% end %>
 </div>
-

@@ -1,2 +1,21 @@
-<h2>placeholder text: main topic would go here</h2>
-<p>placeholder text: add posts here</p>
+<div class="eight columns topic">
+  <h2 class ="nomargin"><%= @topic_post["title"] %></h2>
+  <div>Posted by: <%= @topic_post["name"] %></div>
+  <div><%= @topic_post["content"] %></div>
+  <div><%= @topic_post["upvotes"] %> Upvotes</div>
+</div>
+<% if session['logged_in'] %>
+  <a href="/regular_post/<%= @topic_post["id"] %>" class="button">New Post</a>
+<% else %>
+<% end %>
+<div>
+<% if @post_list.any? %>
+  <% @post_list.each do |post| %>
+  <div class="six columns topic">
+    <div>Posted by: <%= post["name"] %></div>
+    <div><%= post["content"] %></div>
+  </div>
+  <% end %>
+<% else %>  
+  <% end %> 
+</div>

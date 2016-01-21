@@ -2,6 +2,15 @@ body {
   text-align: center;
 }
 
+textarea {
+  height: 250px;
+  width: 30%;
+}
+
+.nomargin {
+  margin: 0;
+}
+
 .header {
   background-image: url(http://susancorso.com/seedsforsanctuary/wp-content/uploads/2013/04/box_placeholder.jpg);
   background-size: cover;

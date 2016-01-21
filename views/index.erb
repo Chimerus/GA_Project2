@@ -1,12 +1,13 @@
 <h1>Welcome to COOL FORUM BRO (working name)</h1>
 <h2>Server announcements</h2>
-<h2>Top 3 topics go here </h2>
+<h3>Top 3 Posts!</h3>
 <div>
   <% @top_topics.each do |topic| %>
   <div class="eight columns topic">
-    <div><%= topic["title"] %></div>
-    <div>Posted by: <%= topic["user_id"] %></div>
+    <a href="/topic_thread/<%= topic["id"] %>"><h4 class ="nomargin"><%= topic["title"] %></h4></a>
+    <div>Posted by: <%= topic["name"] %></div>
     <div><%= topic["content"] %></div>
+    <div><%= topic["upvotes"] %> Upvotes</div>
   </div>
   <% end %>
 </div>
