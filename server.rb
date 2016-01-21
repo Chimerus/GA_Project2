@@ -9,10 +9,11 @@ module Forum
   class Server < Sinatra::Base
     # session handling, must be enabled! to secure login instead of cookies
     enable :sessions
+    # to enable updating and destroying information
     set :method_override,true
 
     @@db = PG.connect dbname: 'forum_dev'
-
+    # who is currently logged in
     def current_user
       @current_user ||= @@db.exec_params(<<-SQL, [session['user_id']]).first
         SELECT * FROM users  WHERE id = $1
@@ -29,21 +30,19 @@ module Forum
     end
 
     post '/login' do
-      name_test = params['name']
+      email_test = params['email']
       password = params['password']
-
-      returning_user = @@db.exec_params(<<-SQL, [name_test])
-        SELECT * FROM users WHERE name = $1
+      returning_user = @@db.exec_params(<<-SQL, [email_test])
+        SELECT * FROM users WHERE email = $1
       SQL
-      # binding.pry
       if returning_user.any?
         checky = BCrypt::Password.new(returning_user[0]['password_digest'])
         # check the bcrypt password against the PLAINTEXT password
         if checky == password
           # this user_id is just a var, but now they are tagged?
           session['user_id'] = returning_user.first['id'].to_i
+          # how I check that they are "logged in" to enable/disable features, explicit true for clarity
           session['logged_in'] = true
-          # binding.pry
           redirect '/'
         else
           # sends to ending page if password incorrect, notifies
@@ -73,56 +72,59 @@ module Forum
     end
 
     post '/signup' do
+      name = params['name']
       password_digest = BCrypt::Password.create(params['password'])
-      new_user = @@db.exec_params(<<-SQL, [params['name'], params['email'], password_digest])
-      INSERT INTO users (name, email, password_digest)
-      VALUES ($1,$2,$3) RETURNING id;
+      email = params['email']
+      image = params['img_link']
+      name = params['real_name']
+      info = params['about']
+      new_user = @@db.exec_params(<<-SQL, [ name, password_digest, email, image, name, info])
+      INSERT INTO users (name, password_digest, email, img_link, real_name, about)
+      VALUES ($1,$2,$3,$4,$5,$6) RETURNING id;
       SQL
-      # this user_id is just a var, but now they are tagged?
+      # this user_id is just a var, but now they are tagged
       session['user_id'] = new_user.first['id'].to_i
+      # session['logged_in'] = true
       redirect '/'
     end
 
     get '/topics' do
-      # @topic_list = @@db.exec('SELECT * FROM topics LEFT JOIN users ON user_id = users.id')
+      # besides the topic information only need the name from users, so only taking that from users
       @topic_list = @@db.exec('SELECT topics.*, users.name FROM topics, users WHERE topics.user_id = users.id')
-
       erb :topics
     end
 
+    # see the topic and comments for a specific topic
     get '/topic_thread/:id' do
       @this_topic = params[:id]
       @topic_post = @@db.exec("SELECT topics.*, users.name FROM topics, users WHERE topics.id = #{@this_topic}")[0]
       @post_list = @@db.exec("SELECT posts.*, users.name FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id")
       erb :topic_thread
     end
-    # Topic and Post routes and creation
 
+    # Topic and Post routes and creation
+    # to the topic creation form
     get '/post_topic' do
       erb :post_topic
     end
 
+    # create a new topic
     post '/topics' do 
+      title = params["title"]
       # new md stuff
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
       markdown = md.render(params["content"])
-      # end
-      title = params["title"]
-      # content = params["content"]
-      op = session['user_id']
       upvotes = 0
-      @@db.exec_params(<<-SQL, [title, markdown, upvotes, op])
-      INSERT INTO topics (title, content, upvotes, user_id)
-      VALUES ($1,$2,$3,$4);
+      comments = 0
+      op = session['user_id']
+      @@db.exec_params(<<-SQL, [title, markdown, upvotes, comments, op])
+      INSERT INTO topics (title, content, upvotes, responses, user_id)
+      VALUES ($1,$2,$3,$4,$5);
       SQL
       redirect '/topics'
     end 
 
-    get '/regular_post/:id' do
-      @topic_id = params[:id]
-      erb :regular_post
-    end
-
+    # the upvote modifier
     put '/update/:id' do
       @up_id = params[:id].to_i
       @@db.exec("UPDATE topics SET upvotes = upvotes + 1 WHERE id = #{@up_id}")
@@ -130,6 +132,12 @@ module Forum
       redirect '/topics'
     end
 
+    get '/regular_post/:id' do
+      @topic_id = params[:id]
+      erb :regular_post
+    end
+
+    # Posting a comment to a topic
     post '/regular_post' do 
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
       markdown = md.render(params["content"])
@@ -140,9 +148,11 @@ module Forum
       INSERT INTO posts (content, user_id, topics_id)
       VALUES ($1,$2,$3);
       SQL
+      # and update the topic with response number
+      @@db.exec("UPDATE topics SET responses = responses + 1 WHERE id = #{t_id}")
       redirect '/topics'
     end 
-
+    # where route things like wrong password, logout, and an easter egg
     get '/end' do
       erb :end
     end

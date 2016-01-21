@@ -1,6 +1,6 @@
 <h1>Welcome to COOL FORUM BRO (working name)</h1>
 <h2>Server announcements</h2>
-<h3>Top 3 Posts!</h3>
+<h3>Top 3 Posts by upvotes!</h3>
 <div>
   <% @top_topics.each do |topic| %>
   <div class="eight columns topic">
@@ -8,6 +8,7 @@
     <div>Posted by: <%= topic["name"] %></div>
     <div><%= topic["content"] %></div>
     <div><%= topic["upvotes"] %> Upvotes</div>
+    <div>Responses: <%= topic["responses"] %></div>
   </div>
   <% end %>
 </div>

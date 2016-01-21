@@ -25,6 +25,7 @@ textarea {
 .whitey {
   color: white;
   border-color: white;
+  display: inline-block;
 }
 
 .topic {

@@ -12,6 +12,7 @@
     <div>Posted by: <%= topic["name"] %></div>
     <div><%= topic["content"] %></div>
     <div><%= topic["upvotes"] %> Upvotes</div>
+    <div>Responses: <%= topic["responses"] %></div>
     <% if session['logged_in'] %>
     <form method="post" action="/update/<%=topic['id']%>">
       <input type ="hidden" name="_method" value="put">

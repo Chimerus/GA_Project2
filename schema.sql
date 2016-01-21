@@ -9,6 +9,7 @@ CREATE TABLE users (
   name VARCHAR(20) NOT NULL,
   password_digest VARCHAR NOT NULL,
   email VARCHAR UNIQUE NOT NULL,
+  img_link VARCHAR,
   real_name VARCHAR(50),
   about VARCHAR
 );
@@ -18,6 +19,7 @@ CREATE TABLE topics (
   title VARCHAR(50) NOT NULL,
   content VARCHAR NOT NULL,
   upvotes INTEGER DEFAULT 0, 
+  responses INTEGER DEFAULT 0, 
   user_id INTEGER REFERENCES users(id)
 );
 
