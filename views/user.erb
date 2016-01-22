@@ -1,33 +1,45 @@
 <% if session['logged_in'] %>
-  <div class="container">
+  <div class="topic container">
     <h1><%= @user["name"] %></h1>
-    <img src="<%= avatar_url(@user) %>" alt="profile picture"> 
+    <% if @user["img_link"] %>
+      <img src="<%= @user["img_link"] %>" alt="profile picture" class="imgformat"> 
+    <% else %>
+     <img src="<%= avatar_url(@user) %>" alt="profile picture"> 
+    <% end %>
     <div><%= @user["real_name"] %></div>
     <div><%= @user["about"] %> </div>
-    <% if @user_topics.any? %>
-      <h4> Topics: </h4>
-      <% @user_topics.each do |topic| %>
-        <div class="container">
-          <a href="/topic_thread/<%= topic["id"] %>">
-            <h4><%= topic["title"] %></h4>
-          </a>
-          <div><%= topic["content"] %></div>
-          <div><%= topic["upvotes"] %> Upvotes</div>
-          <div>Responses: <%= topic["responses"] %></div>
-        </div>
+  </div>
+<% else %>
+  <h1>Log in to see Profile!</h1>
+      <% if @user_topics.any? %>
+        <div class="topic container">
+        <h4> Topics: </h4>
+        <% @user_topics.each do |topic| %>
+          <div class="topic container">
+            <a href="/topic_thread/<%= topic["id"] %>">
+              <h4><%= topic["title"] %></h4>
+            </a>
+            <div><%= topic["content"] %></div>
+            <div><%= topic["upvotes"] %> Upvotes</div>
+            <div>Responses: <%= topic["responses"] %></div>
+          </div>
       <% end %>
     <% else %>
     <% end %>
-
+    </div>
     <% if @user_comments.any? %>
+      <div class="topic container">
       <h4> Comments: </h4>
        <% @user_comments.each do |comment| %>
-        <div class="container">
+        <div class="topic container">
+        <div>
+          <a href="/topic_thread/<%= comment["topics_id"] %>">
+              <h6>Link to Thread</h6>
+            </a>
+        </div>
         <div><%= comment["content"] %></div>
         </div>
       <% end %>
     <% end %>  
   </div>
-<% else %>
-  <h1>Nothing to see here, Bro</h1>
 <% end %>

@@ -1,6 +1,6 @@
 <div class="eight columns topic">
   <h2 class ="nomargin"><%= @topic_post["title"] %></h2>
-  <div>Posted by: <%= @topic_post["name"] %></div>
+  <div>Posted by: <a href="/user/<%= @topic_post["user_id"] %>"><%= @topic_post["name"] %></a></div>
   <div><%= @topic_post["content"] %></div>
   <div><%= @topic_post["upvotes"] %> Upvotes</div>
   <div>Responses: <%= @topic_post["responses"] %></div>
@@ -12,7 +12,7 @@
 <% if @post_list.any? %>
   <% @post_list.each do |post| %>
   <div class="six columns topic">
-    <div>Posted by: <%= post["name"] %></div>
+    <div>Posted by: <a href="/user/<%= post["user_id"] %>"><%= post["name"] %></a></div>
     <div><%= post["content"] %></div>
   </div>
   <% end %>

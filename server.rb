@@ -19,15 +19,10 @@ module Forum
         SELECT * FROM users  WHERE id = $1
       SQL
     end
-
+    # Makes Gravatar work
     def avatar_url(user)
-      # if user.avatar_url.present?
-      #   user.avatar_url
-      # else
-        # default_url = "#{root_url}images/guest.png"
         gravatar_id = Digest::MD5.hexdigest(user['email'].downcase)
-        "http://gravatar.com/avatar/#{gravatar_id}.png?s=48&d=identicon"
-      # end
+        "http://gravatar.com/avatar/#{gravatar_id}.png?s=75&d=identicon"
     end
 
     # def markdown(text)
@@ -86,9 +81,9 @@ module Forum
       password_digest = BCrypt::Password.create(params['password'])
       email = params['email']
       image = params['img_link']
-      name = params['real_name']
+      real_name = params['real_name']
       info = params['about']
-      new_user = @@db.exec_params(<<-SQL, [ name, password_digest, email, image, name, info])
+      new_user = @@db.exec_params(<<-SQL, [ name, password_digest, email, image, real_name, info])
       INSERT INTO users (name, password_digest, email, img_link, real_name, about)
       VALUES ($1,$2,$3,$4,$5,$6) RETURNING id;
       SQL
@@ -172,9 +167,17 @@ module Forum
       @user = @@db.exec_params("SELECT * FROM users WHERE id = $1", [session['user_id']]).first
       @user_topics = @@db.exec_params("SELECT * FROM topics WHERE user_id = $1",[session['user_id']])
       @user_comments = @@db.exec_params("SELECT * FROM posts WHERE user_id = $1",[session['user_id']])
-      
-      binding.pry
       erb :user
     end
+
+    get '/user/:id' do
+      temp = params[:id]
+      @user = @@db.exec_params("SELECT * FROM users WHERE id = $1", [temp]).first
+      @user_topics = @@db.exec_params("SELECT * FROM topics WHERE user_id = $1",[temp])
+      @user_comments = @@db.exec_params("SELECT * FROM posts WHERE user_id = $1",[temp])
+      erb :user
+    end
+    # do I put the more specific before or after in rb?
   end
 end
+      # binding.pry

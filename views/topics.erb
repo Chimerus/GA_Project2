@@ -1,16 +1,17 @@
-<h1>All Topics</h1>
-
+<div class="topic container">
+<h1 class="topic container">All Topics</h1>
 <% if session['logged_in'] %>
     <a href="/post_topic" class="button">New Topic</a>
 <% else %>
 <% end %>
+</div>
 <div>
   <% @topic_list.each do |topic| %>
   <% #binding.pry %>
   <div class="eight columns topic">
     <a href="/topic_thread/<%= topic["id"] %>"><h4 class ="nomargin"><%= topic["title"] %></h4></a>
-    <div>Posted by: <%= topic["name"] %></div>
-    <div><%= topic["content"] %></div>
+    <div>Posted by: <a href="/user/<%= topic["user_id"] %>"><%= topic["name"] %></a></div>
+    <div class="topic container"><%= topic["content"] %></div>
     <div><%= topic["upvotes"] %> Upvotes</div>
     <div>Responses: <%= topic["responses"] %></div>
     <% if session['logged_in'] %>

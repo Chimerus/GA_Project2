@@ -11,7 +11,7 @@ CREATE TABLE users (
   email VARCHAR UNIQUE NOT NULL,
   img_link VARCHAR,
   real_name VARCHAR(50),
-  about VARCHAR
+  about VARCHAR,
 );
 
 CREATE TABLE topics (
