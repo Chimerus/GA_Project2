@@ -1,13 +1,15 @@
 <% if session['logged_in'] %>
-<form action="/regular_post" method="post">
+<form action="/regular_post" method="post" class="container topic">
+<div class="row container">
   <div>
     <label for="content">Enter text here, bro </label>
-    <textarea name="content" required></textarea> 
+    <textarea class="u-full-width" placeholder="Text" name="content" required></textarea> 
   </div>
   <input type ="hidden" name="topics_id" value="<%= @topic_id %>">
   <div>
   <input type="submit" value="Submit" />
   </div>
+</div>
 </form>
 <% else %>
   <h1>Nothing to see here, Bro</h1>

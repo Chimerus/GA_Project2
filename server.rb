@@ -20,6 +20,16 @@ module Forum
       SQL
     end
 
+    def avatar_url(user)
+      # if user.avatar_url.present?
+      #   user.avatar_url
+      # else
+        # default_url = "#{root_url}images/guest.png"
+        gravatar_id = Digest::MD5.hexdigest(user['email'].downcase)
+        "http://gravatar.com/avatar/#{gravatar_id}.png?s=48&d=identicon"
+      # end
+    end
+
     # def markdown(text)
     #   options = [:hard_wrap, :filter_html, :autolink, :no_intraemphasis, :fenced_code, :gh_blockcode]
     #   Redcarpet.new(text, *options).to_html
@@ -155,6 +165,16 @@ module Forum
     # where route things like wrong password, logout, and an easter egg
     get '/end' do
       erb :end
+    end
+
+    get '/user' do
+      # temp = session['user_id']
+      @user = @@db.exec_params("SELECT * FROM users WHERE id = $1", [session['user_id']]).first
+      @user_topics = @@db.exec_params("SELECT * FROM topics WHERE user_id = $1",[session['user_id']])
+      @user_comments = @@db.exec_params("SELECT * FROM posts WHERE user_id = $1",[session['user_id']])
+      
+      binding.pry
+      erb :user
     end
   end
 end
