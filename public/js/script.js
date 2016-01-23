@@ -1,5 +1,18 @@
 $(document).ready(function(){
 
+// Move the quad!
+$('#fly').on('click', function(){
+  $("#quadcopter").show();
+  $("#stop").show();
+  $('#fly').hide();
+  $(document).mousemove(function(e){
+    $("#quadcopter").stop().animate({left:e.pageX, top:e.pageY});
+  });
+})
+
+//stop (technically reset) the quad
+$("#stop").on('click',function(){location.reload();})
+
   /* Slider */
 
   var slider = $('.slider');
@@ -23,7 +36,6 @@ $(document).ready(function(){
   }
 
   setInterval(start_slider, 2000);
-
   /* Menus */
 
   var menu_items = $('.main_navigation li');

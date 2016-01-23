@@ -1,5 +1,6 @@
+<div class="container topic">
 <% if session['logged_in'] %>
-<form action="/topics" method="post" class="container topic">
+<form action="/topics" method="post">
   <div class="row container">
 
   <div>
@@ -21,3 +22,4 @@
 <% else %>
   <h1>Log in to post!</h1>
 <% end %>
+</div>

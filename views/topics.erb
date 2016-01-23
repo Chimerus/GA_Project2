@@ -1,5 +1,5 @@
 <div class="topic container">
-<h1 class="topic container">All Topics</h1>
+<h1>All Topics</h1>
 <% if session['logged_in'] %>
     <a href="/post_topic" class="button">New Topic</a>
 <% else %>
@@ -7,18 +7,23 @@
 </div>
 <div>
   <% @topic_list.each do |topic| %>
-  <% #binding.pry %>
   <div class="eight columns topic">
     <a href="/topic_thread/<%= topic["id"] %>"><h4 class ="nomargin"><%= topic["title"] %></h4></a>
+   <% if topic["img_link"].empty? %>
+      <img src="<%= avatar_url(topic) %>" alt="profile picture">    
+    <% else %>
+      <img src="<%= topic["img_link"] %>" alt="profile picture" class="imgformat"> 
+    <% end %>
     <div>Posted by: <a href="/user/<%= topic["user_id"] %>"><%= topic["name"] %></a></div>
     <div class="topic container"><%= topic["content"] %></div>
     <div><%= topic["upvotes"] %> Upvotes</div>
     <div>Responses: <%= topic["responses"] %></div>
+    <div>Created at: <%= topic["created_at"].slice(0..19) %></div>
     <% if session['logged_in'] %>
     <form method="post" action="/update/<%=topic['id']%>">
       <input type ="hidden" name="_method" value="put">
       <input type="submit" value="Upvote" class="button">
-    </form>
+    </form> 
     <% else %>
     <% end %>
   </div>

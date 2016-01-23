@@ -1,4 +1,7 @@
 <div class="topic container">
+<% if @error %>
+<h1><%= @error %></h1>
+<% end %>
 <h1>Signup</h1>  
 <%= session['the_sell'] %>
 <form action="/signup" method="post">

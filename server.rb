@@ -7,6 +7,8 @@ require 'redcarpet'
 
 module Forum
   class Server < Sinatra::Base
+
+    ERRORS = {"1" => "Email already exists bro...."}
     # session handling, must be enabled! to secure login instead of cookies
     enable :sessions
     # to enable updating and destroying information
@@ -25,12 +27,13 @@ module Forum
         "http://gravatar.com/avatar/#{gravatar_id}.png?s=75&d=identicon"
     end
 
-    # def markdown(text)
-    #   options = [:hard_wrap, :filter_html, :autolink, :no_intraemphasis, :fenced_code, :gh_blockcode]
-    #   Redcarpet.new(text, *options).to_html
-    # end
+    def user_exists?( email )
+      users = @@db.exec_params "SELECT * FROM users WHERE email = $1", [email]
+      return users.count > 0
+    end
 
     get '/login' do
+      @user = @@db.exec_params("SELECT * FROM users WHERE id = $1", [session['user_id']]).first
       erb :login
     end
 
@@ -64,6 +67,7 @@ module Forum
       session[:user_id] = nil
       session['logged_in'] = false
       @logout = true
+      session.clear
       erb :end
     end
 
@@ -73,6 +77,7 @@ module Forum
     end
 
     get '/signup' do
+      @error = ERRORS[ params[:e] ]
       erb :signup
     end
 
@@ -83,19 +88,25 @@ module Forum
       image = params['img_link']
       real_name = params['real_name']
       info = params['about']
-      new_user = @@db.exec_params(<<-SQL, [ name, password_digest, email, image, real_name, info])
-      INSERT INTO users (name, password_digest, email, img_link, real_name, about)
-      VALUES ($1,$2,$3,$4,$5,$6) RETURNING id;
-      SQL
+
+      if user_exists? email
+        redirect '/signup?e=1'
+      else
+        new_user = @@db.exec_params(<<-SQL, [ name, password_digest, email, image, real_name, info])
+        INSERT INTO users (name, password_digest, email, img_link, real_name, about)
+        VALUES ($1,$2,$3,$4,$5,$6) RETURNING id;
+        SQL
+      end
+
       # this user_id is just a var, but now they are tagged
       session['user_id'] = new_user.first['id'].to_i
       # session['logged_in'] = true
-      redirect '/'
+      redirect "/login"
     end
 
     get '/topics' do
       # besides the topic information only need the name from users, so only taking that from users
-      @topic_list = @@db.exec('SELECT topics.*, users.name FROM topics, users WHERE topics.user_id = users.id')
+      @topic_list = @@db.exec('SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.user_id = users.id')
       erb :topics
     end
 

@@ -3,33 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>General Forum</title>
+  <title>4X Forum</title>
+  <link href='https://fonts.googleapis.com/css?family=Orbitron:700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="/css/normalize.css">
   <link rel="stylesheet" href="/css/skeleton.css">
   <link rel="stylesheet" href="/css/style.css">
   <script src="/js/jquery_min.js" type="text/javascript"></script>
   <script src="/js/script.js" type="text/javascript"></script>
+  <link rel="shortcut icon" href="/favicon.ico">
 </head>
 <body>
+<img id="quadcopter" src="http://soaringsky.net/wp-content/uploads/2015/11/solo-smart-drone-1.png" hidden/>
   <div class="header">
-  <div class="shady">
-    <h1>COOL FORUM BRO (working name)</h1>
+  <div >
+    <h1 class="title">Blue Sky: A Quadcopter forum</h1>
       <% if session['logged_in'] %>
       <h3>You are signed in as <%= current_user["name"] %></h3>
+      <% elsif @user %>
+      <h3>Thanks for signing up <%= @user["name"]%></h3>
       <% else %>
       <h3>Welcome Guest!</h3>
       <% end %>
+  <div style="background-color: rgb(37,79,133); padding: 10px;">   
     <a href="/" class="whitey button two columns">Home</a>
     <a href="/topics" class="whitey button two columns">Topics</a>
     <% if session['logged_in'] %>
-      <a href="/user" class="whitey button two columns">Your Profile</a>
+      <a href="/user" class="whitey button two columns">Profile</a>
       <a href="/logout" class="whitey button two columns">Logout</a>
     <% else %>
       <a href="/login" class="whitey button two columns">Login</a>
       <a href="/signup" class="whitey button two columns">Sign Up</a>
     <% end %>
+  </div>  
   </div>
   </div>
   <%=yield%>
+  <a>© JChan 2016</a>
+  <a id="fly">let's fly...</a><a id="stop" hidden>...that's enough</a>
 </body>
 </html>

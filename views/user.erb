@@ -1,45 +1,51 @@
+
 <% if session['logged_in'] %>
   <div class="topic container">
     <h1><%= @user["name"] %></h1>
-    <% if @user["img_link"] %>
-      <img src="<%= @user["img_link"] %>" alt="profile picture" class="imgformat"> 
+    <% if @user["img_link"].empty? %>
+      <img src="<%= avatar_url(@user) %>" alt="profile picture">    
     <% else %>
-     <img src="<%= avatar_url(@user) %>" alt="profile picture"> 
+      <img src="<%= @user["img_link"] %>" alt="profile picture" class="imgformat"> 
     <% end %>
     <div><%= @user["real_name"] %></div>
-    <div><%= @user["about"] %> </div>
+    <div class="topic container"><%= @user["about"] %> </div>
+    <div>User since: <%= @user["created_at"].slice(0..10) %></div>
   </div>
 <% else %>
-  <h1>Log in to see Profile!</h1>
-      <% if @user_topics.any? %>
-        <div class="topic container">
-        <h4> Topics: </h4>
-        <% @user_topics.each do |topic| %>
-          <div class="topic container">
-            <a href="/topic_thread/<%= topic["id"] %>">
-              <h4><%= topic["title"] %></h4>
-            </a>
-            <div><%= topic["content"] %></div>
-            <div><%= topic["upvotes"] %> Upvotes</div>
-            <div>Responses: <%= topic["responses"] %></div>
-          </div>
-      <% end %>
-    <% else %>
-    <% end %>
+  <h1 class="topic container">Log in to see Profile!</h1>
+ <% end %>
+
+
+<% if @user_topics.any? %>
+  <div class="topic container">
+  <h4> Topics: </h4>
+  <% @user_topics.each do |topic| %>
+    <div class="topic container">
+      <a href="/topic_thread/<%= topic["id"] %>">
+        <h4><%= topic["title"] %></h4>
+      </a>
+      <div><%= topic["content"] %></div>
+      <div><%= topic["upvotes"] %> Upvotes</div>
+      <div>Responses: <%= topic["responses"] %></div>
+      <div>Created at: <%= topic["created_at"].slice(0..19) %></div>
     </div>
-    <% if @user_comments.any? %>
+  <% end %>
+  </div>
+<% end %>
+
+<% if @user_comments.any? %>
+  <div class="topic container">
+    <h4> Comments: </h4>
+    <% @user_comments.each do |comment| %>
       <div class="topic container">
-      <h4> Comments: </h4>
-       <% @user_comments.each do |comment| %>
-        <div class="topic container">
-        <div>
-          <a href="/topic_thread/<%= comment["topics_id"] %>">
-              <h6>Link to Thread</h6>
-            </a>
-        </div>
-        <div><%= comment["content"] %></div>
-        </div>
-      <% end %>
-    <% end %>  
+      <div>
+      <a href="/topic_thread/<%= comment["topics_id"] %>">
+        <h6>Link to Thread</h6>
+      </a>
+      </div>
+      <div><%= comment["content"] %></div>
+      <div>Created at: <%= comment["created_at"].slice(0..19) %></div>
+      </div>
+    <% end %>
   </div>
 <% end %>

@@ -1,16 +1,23 @@
 <div class="topic container">
-<h1>Welcome to COOL FORUM BRO (working name)</h1>
-<h2>Server announcements</h2>
+<h1 class="title">Welcome to Blue Sky!</h1>
+<h4>Quadcopters are popular remote controlled or autonomous multirotors. They are being used for everything from surveillance to FPV racing.<br>
+This forum provides a place to meet with other enthusiasts and share information. </h4>
 <h3>Top 3 Posts by upvotes!</h3>
 </div>
 <div>
   <% @top_topics.each do |topic| %>
   <div class="eight columns topic">
     <a href="/topic_thread/<%= topic["id"] %>"><h4 class ="nomargin"><%= topic["title"] %></h4></a>
+    <% if topic["img_link"].empty? %>
+      <img src="<%= avatar_url(topic) %>" alt="profile picture">    
+    <% else %>
+      <img src="<%= topic["img_link"] %>" alt="profile picture" class="imgformat"> 
+    <% end %>
     <div>Posted by: <a href="/user/<%= topic["user_id"] %>"><%= topic["name"] %></a></div>
     <div class="topic container"><%= topic["content"] %></div>
     <div><%= topic["upvotes"] %> Upvotes</div>
     <div>Responses: <%= topic["responses"] %></div>
+    <div>Created at: <%= topic["created_at"].slice(0..19) %></div>
   </div>
   <% end %>
 </div>

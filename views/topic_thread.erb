@@ -1,19 +1,22 @@
 <div class="eight columns topic">
   <h2 class ="nomargin"><%= @topic_post["title"] %></h2>
   <div>Posted by: <a href="/user/<%= @topic_post["user_id"] %>"><%= @topic_post["name"] %></a></div>
-  <div><%= @topic_post["content"] %></div>
+  <div class="topic container"><%= @topic_post["content"] %></div>
   <div><%= @topic_post["upvotes"] %> Upvotes</div>
   <div>Responses: <%= @topic_post["responses"] %></div>
-</div>
+  <div>Created at: <%= @topic_post["created_at"].slice(0..19) %></div>
 <% if session['logged_in'] %>
   <a href="/regular_post/<%= @topic_post["id"] %>" class="button">New Post</a>
 <% end %>
+</div>
+
 <div>
 <% if @post_list.any? %>
   <% @post_list.each do |post| %>
   <div class="six columns topic">
     <div>Posted by: <a href="/user/<%= post["user_id"] %>"><%= post["name"] %></a></div>
-    <div><%= post["content"] %></div>
+    <div class="topic container"><%= post["content"] %></div>
+    <div>Created at: <%= post["created_at"].slice(0..19) %></div>
   </div>
   <% end %>
 <% else %>  

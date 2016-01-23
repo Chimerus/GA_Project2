@@ -9,9 +9,10 @@ CREATE TABLE users (
   name VARCHAR(20) NOT NULL,
   password_digest VARCHAR NOT NULL,
   email VARCHAR UNIQUE NOT NULL,
-  img_link VARCHAR,
+  img_link VARCHAR DEFAULT NULL,
   real_name VARCHAR(50),
   about VARCHAR,
+  created_at TIMESTAMP DEFAULT current_timestamp
 );
 
 CREATE TABLE topics (
@@ -20,12 +21,16 @@ CREATE TABLE topics (
   content VARCHAR NOT NULL,
   upvotes INTEGER DEFAULT 0, 
   responses INTEGER DEFAULT 0, 
-  user_id INTEGER REFERENCES users(id)
+  user_id INTEGER REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT current_timestamp,
+  updated_at TIMESTAMP DEFAULT current_timestamp
 );
 
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
   content VARCHAR NOT NULL,
   user_id INTEGER REFERENCES users(id),
-  topics_id INTEGER REFERENCES topics(id)
+  topics_id INTEGER REFERENCES topics(id),
+  created_at TIMESTAMP DEFAULT current_timestamp,
+  updated_at TIMESTAMP DEFAULT current_timestamp
 );
