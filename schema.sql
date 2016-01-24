@@ -22,6 +22,7 @@ CREATE TABLE topics (
   upvotes INTEGER DEFAULT 0, 
   responses INTEGER DEFAULT 0, 
   user_id INTEGER REFERENCES users(id),
+  is_review BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT current_timestamp,
   updated_at TIMESTAMP DEFAULT current_timestamp
 );

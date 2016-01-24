@@ -1,5 +1,5 @@
 <div class="topic container">
-<h1>All Topics</h1>
+<h1 class="title"><%= @topic_type %> list, click Title to go to thread!</h1>
 <% if session['logged_in'] %>
     <a href="/post_topic" class="button">New Topic</a>
 <% else %>

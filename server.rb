@@ -119,8 +119,9 @@ module Forum
     end
 
     get '/topics' do
-      # besides the topic information only need the name from users, so only taking that from users
+      # besides the topic information, need name and img link to display avatar. but for gravatar function, need email too.
       @topic_list = @@db.exec('SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.user_id = users.id')
+      @topic_type = "Full Topics"
       erb :topics
     end
 
@@ -130,12 +131,13 @@ module Forum
       # new md stuff
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
       markdown = md.render(params["content"])
+      reviews = params["is_review"]
       upvotes = 0
       comments = 0
       op = session['user_id']
-      @@db.exec_params(<<-SQL, [title, markdown, upvotes, comments, op])
-      INSERT INTO topics (title, content, upvotes, responses, user_id)
-      VALUES ($1,$2,$3,$4,$5);
+      @@db.exec_params(<<-SQL, [title, markdown, upvotes, comments, op, reviews])
+      INSERT INTO topics (title, content, upvotes, responses, user_id, is_review)
+      VALUES ($1,$2,$3,$4,$5,$6);
       SQL
       redirect '/topics'
     end 
@@ -192,6 +194,13 @@ module Forum
       WHERE id = $2;
       SQL
       redirect '/users'
+    end
+
+    get '/reviews' do
+      # basically a topics search only for topics tagged review
+      @topic_type = "Reviews"
+      @topic_list = @@db.exec_params('SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.user_id = users.id AND is_review = TRUE')
+      erb :topics
     end
 
     # where route things like wrong password, logout, and an easter egg
