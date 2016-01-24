@@ -31,6 +31,11 @@ textarea {
   margin: 0;
 }
 
+.sig {
+  font-family: 'Orbitron', sans-serif;
+  color: rgb(30,174,219);
+}
+
 .title {
   font-family: 'Orbitron', sans-serif;
   padding-top: 10px;
