@@ -11,7 +11,9 @@ $('#fly').on('click', function(){
 })
 
 //stop (technically reset) the quad
-$("#stop").on('click',function(){location.reload();})
+$("#stop").on('click',function(){
+  location.reload();
+})
 
   /* Slider */
 

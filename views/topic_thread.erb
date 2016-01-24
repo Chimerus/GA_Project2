@@ -1,22 +1,72 @@
 <div class="eight columns topic">
   <h2 class ="nomargin"><%= @topic_post["title"] %></h2>
-  <div>Posted by: <a href="/user/<%= @topic_post["user_id"] %>"><%= @topic_post["name"] %></a></div>
+  <% if @topic_post["img_link"].empty? %>
+    <img src="<%= avatar_url(@topic_post) %>" alt="profile picture">    
+  <% else %>
+    <img src="<%= @topic_post["img_link"] %>" alt="profile picture" class="imgformat"> 
+  <% end %>
+  <div>Posted by: <a href="/users/<%= @topic_post["user_id"] %>"><%= @topic_post["name"] %></a></div>
   <div class="topic container"><%= @topic_post["content"] %></div>
   <div><%= @topic_post["upvotes"] %> Upvotes</div>
   <div>Responses: <%= @topic_post["responses"] %></div>
-  <div>Created at: <%= @topic_post["created_at"].slice(0..19) %></div>
+  <% if @topic_post["created_at"] == @topic_post["updated_at"] %>
+    <div>Created at: <%= @topic_post["created_at"].slice(0..19) %></div>
+  <% else %>
+    <div>Edited at: <%= @topic_post["updated_at"].slice(0..19) %></div>
+  <% end %>
 <% if session['logged_in'] %>
   <a href="/regular_post/<%= @topic_post["id"] %>" class="button">New Post</a>
+
+<!-- edit only your topics -->
+    <% if session['user_id'] == @topic_post['user_id'].to_i %>
+     <details>
+       <summary class="button">Edit Topic</summary>
+        <div class="topic container">
+          <form method="post" action="/update_topic/<%=@topic_post['id']%>">
+            <input type ="hidden" name="_method" value="put">
+            <label for="content">Enter text here. </label>
+            <textarea name="content" required><%= @topic_post["content"] %></textarea> 
+            <input type="submit" value="Submit Edit" class="button">
+          </form> 
+        </div>
+     </details>
+      <% end %>
+
 <% end %>
 </div>
 
 <div>
 <% if @post_list.any? %>
   <% @post_list.each do |post| %>
-  <div class="six columns topic">
-    <div>Posted by: <a href="/user/<%= post["user_id"] %>"><%= post["name"] %></a></div>
+  <div class="six columns topic" style="padding-top: 10px;">
+    <% if post["img_link"].empty? %>
+      <img src="<%= avatar_url(post) %>" alt="profile picture">    
+    <% else %>
+      <img src="<%= post["img_link"] %>" alt="profile picture" class="imgformat"> 
+    <% end %>
+    <div>Posted by: <a href="/users/<%= post["user_id"] %>"><%= post["name"] %></a></div>
     <div class="topic container"><%= post["content"] %></div>
-    <div>Created at: <%= post["created_at"].slice(0..19) %></div>
+    <% if post["created_at"] == post["updated_at"] %>
+      <div>Created at: <%= post["created_at"].slice(0..19) %></div>
+    <% else %>
+      <div>Edited at: <%= post["updated_at"].slice(0..19) %></div>
+    <% end %>
+
+<!-- edit only your comment -->
+    <% if session['user_id'] == post['user_id'].to_i %>
+     <details>
+       <summary class="button">Edit Post</summary>
+        <div class="topic container">
+          <form method="post" action="/update_comment/<%=post['id']%>">
+            <input type ="hidden" name="_method" value="put">
+            <label for="content">Enter text here. </label>
+            <textarea name="content" required><%= post["content"] %></textarea> 
+            <input type="submit" value="Submit Edit" class="button">
+          </form> 
+        </div>
+     </details>
+      <% end %>
+
   </div>
   <% end %>
 <% else %>  

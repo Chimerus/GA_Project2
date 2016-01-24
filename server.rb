@@ -7,8 +7,8 @@ require 'redcarpet'
 
 module Forum
   class Server < Sinatra::Base
-
-    ERRORS = {"1" => "Email already exists bro...."}
+    # error message list
+    ERRORS = {"1" => "Email already exists...."}
     # session handling, must be enabled! to secure login instead of cookies
     enable :sessions
     # to enable updating and destroying information
@@ -104,17 +104,11 @@ module Forum
       redirect "/login"
     end
 
-    get '/topics' do
-      # besides the topic information only need the name from users, so only taking that from users
-      @topic_list = @@db.exec('SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.user_id = users.id')
-      erb :topics
-    end
-
     # see the topic and comments for a specific topic
     get '/topic_thread/:id' do
       @this_topic = params[:id]
-      @topic_post = @@db.exec("SELECT topics.*, users.name FROM topics, users WHERE topics.id = #{@this_topic}")[0]
-      @post_list = @@db.exec("SELECT posts.*, users.name FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id")
+      @topic_post = @@db.exec("SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.id = #{@this_topic} AND topics.user_id = users.id")[0]
+      @post_list = @@db.exec("SELECT posts.*, users.name, users.img_link, users.email FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id")
       erb :topic_thread
     end
 
@@ -122,6 +116,12 @@ module Forum
     # to the topic creation form
     get '/post_topic' do
       erb :post_topic
+    end
+
+    get '/topics' do
+      # besides the topic information only need the name from users, so only taking that from users
+      @topic_list = @@db.exec('SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.user_id = users.id')
+      erb :topics
     end
 
     # create a new topic
@@ -139,6 +139,18 @@ module Forum
       SQL
       redirect '/topics'
     end 
+
+    put '/update_topic/:id' do
+      mod_id = params[:id]
+      md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+      edit_topics = md.render(params["content"])
+      @@db.exec_params(<<-SQL, [edit_topics, mod_id]) 
+      UPDATE topics 
+      SET content = $1, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $2;
+      SQL
+      redirect '/topics'
+    end
 
     # the upvote modifier
     put '/update/:id' do
@@ -168,25 +180,39 @@ module Forum
       @@db.exec("UPDATE topics SET responses = responses + 1 WHERE id = #{t_id}")
       redirect '/topics'
     end 
+
+    # Editing a comment
+    put '/update_comment/:id' do
+      mod_id = params[:id]
+      md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+      edit_comments = md.render(params["content"])
+      @@db.exec_params(<<-SQL, [edit_comments, mod_id]) 
+      UPDATE posts 
+      SET content = $1, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $2;
+      SQL
+      redirect '/users'
+    end
+
     # where route things like wrong password, logout, and an easter egg
     get '/end' do
       erb :end
     end
 
-    get '/user' do
+    get '/users' do
       # temp = session['user_id']
       @user = @@db.exec_params("SELECT * FROM users WHERE id = $1", [session['user_id']]).first
       @user_topics = @@db.exec_params("SELECT * FROM topics WHERE user_id = $1",[session['user_id']])
       @user_comments = @@db.exec_params("SELECT * FROM posts WHERE user_id = $1",[session['user_id']])
-      erb :user
+      erb :users
     end
 
-    get '/user/:id' do
+    get '/users/:id' do
       temp = params[:id]
       @user = @@db.exec_params("SELECT * FROM users WHERE id = $1", [temp]).first
       @user_topics = @@db.exec_params("SELECT * FROM topics WHERE user_id = $1",[temp])
       @user_comments = @@db.exec_params("SELECT * FROM posts WHERE user_id = $1",[temp])
-      erb :user
+      erb :users
     end
     # do I put the more specific before or after in rb?
   end

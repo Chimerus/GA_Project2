@@ -13,7 +13,7 @@ This forum provides a place to meet with other enthusiasts and share information
     <% else %>
       <img src="<%= topic["img_link"] %>" alt="profile picture" class="imgformat"> 
     <% end %>
-    <div>Posted by: <a href="/user/<%= topic["user_id"] %>"><%= topic["name"] %></a></div>
+    <div>Posted by: <a href="/users/<%= topic["user_id"] %>"><%= topic["name"] %></a></div>
     <div class="topic container"><%= topic["content"] %></div>
     <div><%= topic["upvotes"] %> Upvotes</div>
     <div>Responses: <%= topic["responses"] %></div>

@@ -8,7 +8,23 @@ body {
 
 textarea {
   height: 250px;
-  width: 70%;
+  width: 80%;
+}
+
+.bottomless {
+  margin-bottom: 0;
+}
+
+.header {
+  background-image: url(http://www.stockazoo.com/uploads/3/5/4/5/3545172/sky_0242.jpg);
+  background-size: cover;
+  background-position: center;
+  color: white;
+}
+
+.imgformat {
+  height: 75px;
+  width: 75px;
 }
 
 .nomargin {
@@ -20,23 +36,6 @@ textarea {
   padding-top: 10px;
 }
 
-.header {
-  background-image: url(http://www.stockazoo.com/uploads/3/5/4/5/3545172/sky_0242.jpg);
-  background-size: cover;
-  background-position: center;
-  color: white;
-}
-
-.shady {
-  background: rgba(230,230,230,0.7);
-}
-
-.whitey {
-  color: white;
-  border-color: white;
-  display: inline-block;
-}
-
 .topic {
   margin: 10px auto;
   border: solid 2px black;
@@ -44,9 +43,10 @@ textarea {
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.3);
 }
 
-.imgformat {
-  height: 75px;
-  width: 75px;
+.whitey {
+  color: white;
+  border-color: white;
+  display: inline-block;
 }
 
 #quadcopter {
@@ -57,4 +57,3 @@ textarea {
   left: 2%;
   z-index: 10;
 }
-

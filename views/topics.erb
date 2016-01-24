@@ -14,17 +14,36 @@
     <% else %>
       <img src="<%= topic["img_link"] %>" alt="profile picture" class="imgformat"> 
     <% end %>
-    <div>Posted by: <a href="/user/<%= topic["user_id"] %>"><%= topic["name"] %></a></div>
+    <div>Posted by: <a href="/users/<%= topic["user_id"] %>"><%= topic["name"] %></a></div>
     <div class="topic container"><%= topic["content"] %></div>
     <div><%= topic["upvotes"] %> Upvotes</div>
     <div>Responses: <%= topic["responses"] %></div>
-    <div>Created at: <%= topic["created_at"].slice(0..19) %></div>
-    <% if session['logged_in'] %>
-    <form method="post" action="/update/<%=topic['id']%>">
-      <input type ="hidden" name="_method" value="put">
-      <input type="submit" value="Upvote" class="button">
-    </form> 
+    <% if topic["created_at"] == topic["updated_at"] %>
+      <div>Created at: <%= topic["created_at"].slice(0..19) %></div>
     <% else %>
+      <div>Edited at: <%= topic["updated_at"].slice(0..19) %></div>
+    <% end %>
+    <!-- only post when logged in -->
+    <% if session['logged_in'] %>
+      <form method="post" action="/update/<%=topic['id']%>" class="bottomless">
+        <input type ="hidden" name="_method" value="put">
+        <input type="submit" value="Upvote" class="button">
+      </form> 
+      <!-- edit only your topics -->
+    <% if session['user_id'] == topic['user_id'].to_i %>
+     <details>
+       <summary class="button">Edit Topic</summary>
+        <div class="topic container">
+          <form method="post" action="/update_topic/<%=topic['id']%>">
+            <input type ="hidden" name="_method" value="put">
+            <label for="content">Enter text here. </label>
+            <textarea name="content" required><%= topic["content"] %></textarea> 
+            <input type="submit" value="Submit Edit" class="button">
+          </form> 
+        </div>
+     </details>
+      <% end %>
+
     <% end %>
   </div>
   <% end %>
