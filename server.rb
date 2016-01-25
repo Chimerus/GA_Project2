@@ -14,7 +14,7 @@ module Forum
     # to enable updating and destroying information
     set :method_override,true
 
-    @@db = PG.connect dbname: 'forum_dev'
+    @@db = PG.connect dbname: 'd2otdc6hrq0sc9'
 
     # Methods 
     # who is currently logged in
