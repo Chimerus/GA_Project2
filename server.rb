@@ -85,7 +85,7 @@ module Forum
     end
 
     get '/' do
-      @top_topics = @@db.exec_params('SELECT * FROM topics LEFT JOIN users ON user_id = users.id ORDER BY upvotes DESC LIMIT 3')
+      @top_topics = @@db.exec_params('SELECT topics.*, users.name, users.img_link, users.email FROM topics LEFT JOIN users ON user_id = users.id ORDER BY upvotes DESC LIMIT 3')
       erb :index
     end
 
@@ -138,7 +138,7 @@ module Forum
     get '/topic_thread/:id' do
       @this_topic = params[:id]
       @topic_post = @@db.exec_params("SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.id = #{@this_topic} AND topics.user_id = users.id")[0]
-      @post_list = @@db.exec_params("SELECT posts.*, users.name, users.img_link, users.email FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id ORDER BY updated_at")
+      @post_list = @@db.exec_params("SELECT posts.*, users.name, users.img_link, users.email FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id ORDER BY users.created_at")
       erb :topic_thread
     end
 
