@@ -4,6 +4,7 @@ require 'pg'
 require 'bcrypt'
 require 'pry'
 require 'redcarpet'
+require 'uri'
 
 module Forum
   class Server < Sinatra::Base
@@ -14,7 +15,12 @@ module Forum
     # to enable updating and destroying information
     set :method_override,true
 
-    @@db = PG.connect dbname: 'd2otdc6hrq0sc9'
+    if ENV["RACK_ENV"] == "production"
+      uri = URI.parse(ENV['DATABASE_URL'])
+      PG.connect(uri.hostname, uri.port, nil, nil, uri.path[1..-1], uri.user, uri.password)
+    else
+      @@db = PG.connect dbname: 'forum_dev'
+    end
 
     # Methods 
     # who is currently logged in
