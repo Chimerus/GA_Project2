@@ -147,7 +147,7 @@ module Forum
       title = params["title"]
       # new md stuff
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-      markdown = md.render(params["content"])
+      markdown = md.render(params["content"], :filter_html)
       reviews = params["is_review"]
       upvotes = 0
       comments = 0
@@ -163,7 +163,7 @@ module Forum
     put '/update_topic/:id' do
       mod_id = params[:id]
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-      edit_topics = md.render(params["content"])
+      edit_topics = md.render(params["content"], :filter_html)
       @@db.exec_params(<<-SQL, [edit_topics, mod_id]) 
       UPDATE topics 
       SET content = $1, updated_at = CURRENT_TIMESTAMP 
@@ -188,7 +188,7 @@ module Forum
     # Posting a comment to a topic
     post '/regular_post' do 
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-      markdown = md.render(params["content"])
+      markdown = md.render(params["content"], :filter_html)
       # @content = params["content"]
       t_id = params["topics_id"]
       op = session['user_id']
@@ -205,7 +205,7 @@ module Forum
     put '/update_comment/:id' do
       mod_id = params[:id]
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-      edit_comments = md.render(params["content"])
+      edit_comments = md.render(params["content"], :filter_html)
       @@db.exec_params(<<-SQL, [edit_comments, mod_id]) 
       UPDATE posts 
       SET content = $1, updated_at = CURRENT_TIMESTAMP 
