@@ -1,5 +1,6 @@
 <div class="topic container">
 <h1 class="title"><%= @topic_type %> list, click Title to go to thread!</h1>
+<!-- only logged in users can post -->
 <% if session['logged_in'] %>
     <a href="/post_topic" class="button">New Topic</a>
 <% else %>
@@ -23,7 +24,7 @@
     <% else %>
       <div>Edited at: <%= topic["updated_at"].slice(0..19) %></div>
     <% end %>
-    <!-- only post when logged in -->
+    <!-- only upvote when logged in AND havent voted before-->
     <% if session['logged_in'] %>
       <form method="post" action="/update/<%=topic['id']%>" class="bottomless">
         <input type ="hidden" name="_method" value="put">

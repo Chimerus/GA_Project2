@@ -15,12 +15,15 @@ module Forum
     set :method_override,true
 
     @@db = PG.connect dbname: 'forum_dev'
+
+    # Methods 
     # who is currently logged in
     def current_user
       @current_user ||= @@db.exec_params(<<-SQL, [session['user_id']]).first
         SELECT * FROM users  WHERE id = $1
       SQL
     end
+
     # Makes Gravatar work
     def avatar_url(user)
         gravatar_id = Digest::MD5.hexdigest(user['email'].downcase)
@@ -33,7 +36,7 @@ module Forum
     end
 
     get '/login' do
-      @user = @@db.exec_params("SELECT * FROM users WHERE id = $1", [session['user_id']]).first
+      @user_login = @@db.exec_params("SELECT * FROM users WHERE id = $1", [session['user_id']]).first
       erb :login
     end
 
@@ -104,12 +107,8 @@ module Forum
       redirect "/login"
     end
 
-    # see the topic and comments for a specific topic
-    get '/topic_thread/:id' do
-      @this_topic = params[:id]
-      @topic_post = @@db.exec("SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.id = #{@this_topic} AND topics.user_id = users.id")[0]
-      @post_list = @@db.exec("SELECT posts.*, users.name, users.img_link, users.email FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id")
-      erb :topic_thread
+    get '/faq' do
+      erb :faqs
     end
 
     # Topic and Post routes and creation
@@ -120,9 +119,17 @@ module Forum
 
     get '/topics' do
       # besides the topic information, need name and img link to display avatar. but for gravatar function, need email too.
-      @topic_list = @@db.exec('SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.user_id = users.id')
+      @topic_list = @@db.exec_params('SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.user_id = users.id')
       @topic_type = "Full Topics"
       erb :topics
+    end
+
+    # see the topic and comments for a specific topic
+    get '/topic_thread/:id' do
+      @this_topic = params[:id]
+      @topic_post = @@db.exec("SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.id = #{@this_topic} AND topics.user_id = users.id")[0]
+      @post_list = @@db.exec("SELECT posts.*, users.name, users.img_link, users.email FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id")
+      erb :topic_thread
     end
 
     # create a new topic
@@ -142,6 +149,7 @@ module Forum
       redirect '/topics'
     end 
 
+    # editing
     put '/update_topic/:id' do
       mod_id = params[:id]
       md = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
@@ -157,7 +165,7 @@ module Forum
     # the upvote modifier
     put '/update/:id' do
       @up_id = params[:id].to_i
-      @@db.exec("UPDATE topics SET upvotes = upvotes + 1 WHERE id = #{@up_id}")
+      @@db.exec_params("UPDATE topics SET upvotes = upvotes + 1 WHERE id = #{@up_id}")
       # binding.pry
       redirect '/topics'
     end
@@ -223,7 +231,7 @@ module Forum
       @user_comments = @@db.exec_params("SELECT * FROM posts WHERE user_id = $1",[temp])
       erb :users
     end
-    # do I put the more specific before or after in rb?
+
   end
 end
       # binding.pry

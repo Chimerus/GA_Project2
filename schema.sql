@@ -1,8 +1,8 @@
 -- schema tables for forum
 -- These be me dragons
-DROP TABLE IF EXISTS posts;
-DROP TABLE IF EXISTS topics;
-DROP TABLE IF EXISTS users;
+-- DROP TABLE IF EXISTS posts;
+-- DROP TABLE IF EXISTS topics;
+-- DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
@@ -35,3 +35,10 @@ CREATE TABLE posts (
   created_at TIMESTAMP DEFAULT current_timestamp,
   updated_at TIMESTAMP DEFAULT current_timestamp
 );
+
+-- come back to this sometime
+-- to limit upvotes, join table
+-- CREATE TABLE users_upvotes_posts (
+--   user_id INTEGER REFERENCES users(id),
+--   topics_id INTEGER REFERENCES topics(id)
+-- );

@@ -16,16 +16,16 @@
 <img id="quadcopter" src="http://soaringsky.net/wp-content/uploads/2015/11/solo-smart-drone-1.png" hidden/>
   <div class="header">
   <div >
-    <h1 class="title">Blue Sky: A Quadcopter forum</h1>
+    <h1 class="title"><a href="/" style="color:white;">Blue Skies: A Quadcopter forum</a></h1>
       <% if session['logged_in'] %>
       <h3>You are signed in as <%= current_user["name"] %></h3>
-      <% elsif @user %>
-      <h3>Thanks for signing up <%= @user["name"]%></h3>
+      <% elsif @user_login %>
+      <h3>Thanks for signing up <%= @user_login["name"]%></h3>
       <% else %>
       <h3>Welcome Guest!</h3>
       <% end %>
   <div style="background-color: rgb(37,79,133); padding: 10px;">   
-    <a href="/" class="whitey button two columns">Home</a>
+    <a href="/faq" class="whitey button two columns">FAQ</a>
     <a href="/topics" class="whitey button two columns">Topics</a>
     <a href="/reviews" class="whitey button two columns">Reviews</a>
     <% if session['logged_in'] %>
