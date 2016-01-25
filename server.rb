@@ -75,7 +75,7 @@ module Forum
     end
 
     get '/' do
-      @top_topics = @@db.exec('SELECT * FROM topics LEFT JOIN users ON user_id = users.id ORDER BY upvotes DESC LIMIT 3')
+      @top_topics = @@db.exec_params('SELECT * FROM topics LEFT JOIN users ON user_id = users.id ORDER BY upvotes DESC LIMIT 3')
       erb :index
     end
 
@@ -127,8 +127,8 @@ module Forum
     # see the topic and comments for a specific topic
     get '/topic_thread/:id' do
       @this_topic = params[:id]
-      @topic_post = @@db.exec("SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.id = #{@this_topic} AND topics.user_id = users.id")[0]
-      @post_list = @@db.exec("SELECT posts.*, users.name, users.img_link, users.email FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id")
+      @topic_post = @@db.exec_params("SELECT topics.*, users.name, users.img_link, users.email FROM topics, users WHERE topics.id = #{@this_topic} AND topics.user_id = users.id")[0]
+      @post_list = @@db.exec_params("SELECT posts.*, users.name, users.img_link, users.email FROM posts, users WHERE posts.topics_id = #{@this_topic} AND user_id = users.id")
       erb :topic_thread
     end
 
@@ -187,7 +187,7 @@ module Forum
       VALUES ($1,$2,$3);
       SQL
       # and update the topic with response number
-      @@db.exec("UPDATE topics SET responses = responses + 1 WHERE id = #{t_id}")
+      @@db.exec_params("UPDATE topics SET responses = responses + 1 WHERE id = #{t_id}")
       redirect '/topics'
     end 
 
