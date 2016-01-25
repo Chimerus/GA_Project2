@@ -16,8 +16,12 @@ module Forum
     set :method_override,true
 
     if ENV["RACK_ENV"] == "production"
-      uri = URI.parse(ENV['DATABASE_URL'])
-      PG.connect(uri.hostname, uri.port, nil, nil, uri.path[1..-1], uri.user, uri.password)
+      @@db = @@db = PG.connect(
+        dbname: ENV['POSTGRES_DB'],
+        host: ENV['POSTGRES_HOST'],
+        password: ENV['POSTGRES_PASS'],
+        user: ENV['POSTGRES_USER']
+      )
     else
       @@db = PG.connect dbname: 'forum_dev'
     end
